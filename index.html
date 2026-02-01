@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaS Idea Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #8892b0;
+            font-size: 1.1rem;
+        }
+
+        .input-section {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+        }
+
+        #keywords {
+            width: 400px;
+            max-width: 100%;
+            padding: 15px 20px;
+            font-size: 1rem;
+            border: 2px solid #3d4f6f;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #keywords:focus {
+            border-color: #00d9ff;
+        }
+
+        #keywords::placeholder {
+            color: #5a6a8a;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .ideas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .framework-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .framework-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .framework-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .django .framework-icon {
+            background: linear-gradient(135deg, #092e20, #0c4b33);
+            color: #44b78b;
+        }
+
+        .flask .framework-icon {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+            color: #fff;
+        }
+
+        .fastapi .framework-icon {
+            background: linear-gradient(135deg, #009485, #00c4aa);
+            color: #fff;
+        }
+
+        .framework-title h2 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .framework-title p {
+            font-size: 0.8rem;
+            color: #8892b0;
+        }
+
+        .django .framework-title h2 { color: #44b78b; }
+        .flask .framework-title h2 { color: #f0f0f0; }
+        .fastapi .framework-title h2 { color: #00c4aa; }
+
+        .idea-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 15px;
+            transition: transform 0.2s, background 0.2s, border-color 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .idea-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .idea-card:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #00d9ff;
+        }
+
+        .idea-card.selected {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .click-hint {
+            font-size: 0.7rem;
+            color: #5a6a8a;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        #techstack {
+            margin-top: 40px;
+        }
+
+        .techstack-container {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .techstack-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .techstack-header h2 {
+            font-size: 1.5rem;
+            color: #00d9ff;
+            margin-bottom: 5px;
+        }
+
+        .techstack-header p {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+
+        .techstack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .stack-category {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .stack-category h3 {
+            color: #00ff88;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .stack-category ul {
+            list-style: none;
+        }
+
+        .stack-category li {
+            color: #ccd6f6;
+            font-size: 0.9rem;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stack-category li:last-child {
+            border-bottom: none;
+        }
+
+        .prompt-section {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .prompt-section p {
+            color: #8892b0;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .copy-btn {
+            padding: 12px 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(90deg, #00d9ff, #00ff88);
+            color: #1a1a2e;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 217, 255, 0.3);
+        }
+
+        .copy-btn.copied {
+            background: #00ff88;
+        }
+
+        .prompt-preview {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: #ccd6f6;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .idea-card h3 {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: #fff;
+        }
+
+        .idea-card p {
+            font-size: 0.85rem;
+            color: #8892b0;
+            line-height: 1.5;
+        }
+
+        .idea-number {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 0.75rem;
+            margin-right: 10px;
+            color: #00d9ff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #5a6a8a;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .ideas-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SaaS Idea Generator</h1>
+            <p class="subtitle">Enter keywords and get 3 tailored SaaS ideas for Django, Flask & FastAPI</p>
+        </header>
+
+        <div class="input-section">
+            <input type="text" id="keywords" placeholder="Enter keywords (e.g., fitness, AI, scheduling...)">
+            <button onclick="generateIdeas()">Generate Ideas</button>
+        </div>
+
+        <div id="results">
+            <div class="empty-state">
+                <p>Enter some keywords above to generate your SaaS ideas</p>
+            </div>
+        </div>
+
+        <div id="techstack"></div>
+    </div>
+
+    <script>
+        let currentIdeas = null;
+
+        async function generateIdeas() {
+            document.getElementById('techstack').innerHTML = '';
+            const keywords = document.getElementById('keywords').value.trim();
+
+            if (!keywords) {
+                alert('Please enter some keywords');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('results').innerHTML = `
+                <div class="empty-state">
+                    <p>Generating ideas...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ keywords })
+                });
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+
+                // Parse JSON from response
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                const ideas = JSON.parse(jsonMatch[0]);
+
+                renderIdeas(ideas);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = `
+                    <div class="empty-state">
+                        <p>Error generating ideas. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderIdeas(ideas) {
+            currentIdeas = ideas;
+            const resultsHTML = `
+                <div class="ideas-grid">
+                    <div class="framework-section django">
+                        <div class="framework-header">
+                            <div class="framework-icon">DJ</div>
+                            <div class="framework-title">
+                                <h2>Django</h2>
+                                <p>Full website + Admin + Database</p>
+                            </div>
+                        </div>
+                        <div class="idea-card" onclick="selectIdea('django')" id="card-django">
+                            <h3>${ideas.django.name}</h3>
+                            <p>${ideas.django.description}</p>
+                            <p class="click-hint">Click to generate tech stack</p>
+                        </div>
+                    </div>
+
+                    <div class="framework-section flask">
+                        <div class="framework-header">
+                            <div class="framework-icon">FL</div>
+                            <div class="framework-title">
+                                <h2>Flask</h2>
+                                <p>Light tool / API / Prototype</p>
+                            </div>
+                        </div>
+                        <div class="idea-card" onclick="selectIdea('flask')" id="card-flask">
+                            <h3>${ideas.flask.name}</h3>
+                            <p>${ideas.flask.description}</p>
+                            <p class="click-hint">Click to generate tech stack</p>
+                        </div>
+                    </div>
+
+                    <div class="framework-section fastapi">
+                        <div class="framework-header">
+                            <div class="framework-icon">FA</div>
+                            <div class="framework-title">
+                                <h2>FastAPI</h2>
+                                <p>API / Microservice / AI / Real-time</p>
+                            </div>
+                        </div>
+                        <div class="idea-card" onclick="selectIdea('fastapi')" id="card-fastapi">
+                            <h3>${ideas.fastapi.name}</h3>
+                            <p>${ideas.fastapi.description}</p>
+                            <p class="click-hint">Click to generate tech stack</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('results').innerHTML = resultsHTML;
+        }
+
+        async function selectIdea(framework) {
+            if (!currentIdeas) return;
+
+            // Remove previous selection
+            document.querySelectorAll('.idea-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`card-${framework}`).classList.add('selected');
+
+            const idea = currentIdeas[framework];
+            const frameworkNames = { django: 'Django', flask: 'Flask', fastapi: 'FastAPI' };
+
+            document.getElementById('techstack').innerHTML = `
+                <div class="techstack-container">
+                    <div class="techstack-header">
+                        <h2>Generating Tech Stack...</h2>
+                        <p>for ${idea.name}</p>
+                    </div>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/api/techstack', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: idea.name,
+                        description: idea.description,
+                        framework: frameworkNames[framework]
+                    })
+                });
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+                const jsonMatch = content.match(/\{[\s\S]*\}/);
+                const stack = JSON.parse(jsonMatch[0]);
+
+                renderTechStack(idea, frameworkNames[framework], stack);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('techstack').innerHTML = `
+                    <div class="techstack-container">
+                        <div class="empty-state">
+                            <p>Error generating tech stack. Please try again.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function renderTechStack(idea, framework, stack) {
+            const payments = stack.payments ? stack.payments.join(', ') : 'Stripe';
+            const starterPrompt = `Build a ${framework} SaaS app called "${idea.name}".
+
+${idea.description}
+
+Tech stack:
+- Frontend: ${stack.frontend.join(', ')}
+- Database: ${stack.database.join(', ')}
+- Auth: ${stack.authentication.join(', ')}
+- Payments: ${payments}
+- Deployment: ${stack.deployment.join(', ')}
+- Extras: ${stack.extras.join(', ')}
+
+Start by setting up the project structure and basic configuration.`;
+
+            const html = `
+                <div class="techstack-container">
+                    <div class="techstack-header">
+                        <h2>Tech Stack for ${idea.name}</h2>
+                        <p>Recommended stack using ${framework}</p>
+                    </div>
+                    <div class="techstack-grid">
+                        <div class="stack-category">
+                            <h3>Frontend</h3>
+                            <ul>${stack.frontend.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3>Database</h3>
+                            <ul>${stack.database.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3>Authentication</h3>
+                            <ul>${stack.authentication.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3>Payments</h3>
+                            <ul>${(stack.payments || ['Stripe']).map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3>Deployment</h3>
+                            <ul>${stack.deployment.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                        <div class="stack-category">
+                            <h3>Extras</h3>
+                            <ul>${stack.extras.map(item => `<li>${item}</li>`).join('')}</ul>
+                        </div>
+                    </div>
+                    <div class="prompt-section">
+                        <p>Ready to build? Here's your starter prompt for Claude Code or any AI assistant:</p>
+                        <div class="prompt-preview">${starterPrompt}</div>
+                        <button class="copy-btn" onclick="copyPrompt(this)">Copy Prompt</button>
+                    </div>
+                </div>
+            `;
+            document.getElementById('techstack').innerHTML = html;
+            window.currentPrompt = starterPrompt;
+        }
+
+        function copyPrompt(btn) {
+            navigator.clipboard.writeText(window.currentPrompt).then(() => {
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = 'Copy Prompt';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Allow Enter key to trigger generation
+        document.getElementById('keywords').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateIdeas();
+            }
+        });
+    </script>
+
+    <!-- Vercel Analytics -->
+    <script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
